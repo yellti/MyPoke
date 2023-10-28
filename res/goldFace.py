@@ -1,6 +1,6 @@
 import time
 import os
-from PyQt5.QtCore import QTimer, Qt
+from PyQt5.QtCore import QTimer
 from PyQt5.QtWidgets import QWidget
 
 from ui.gold import Ui_Form
@@ -8,6 +8,7 @@ from ui.gold import Ui_Form
 
 from lib.pokeFun import PokeFun
 from lib.appFun import AppFun
+from lib.until import UntilFun
 
 
 class GoldInterface(QWidget, Ui_Form):
@@ -16,12 +17,12 @@ class GoldInterface(QWidget, Ui_Form):
         super().__init__(parent=None)
         self.setupUi(self)
 
-
+        self.until = UntilFun()
         self.appFun = AppFun()
 
         self.gold_foot_start.clicked.connect(self.start_btn)
         self.gold_foot_end.clicked.connect(self.end_btn)
-
+        self.gold_foot_end.setEnabled(False)
         self.updata_time = QTimer(self)
 
     def start_btn(self):
@@ -36,24 +37,20 @@ class GoldInterface(QWidget, Ui_Form):
 
         self.start_init()
 
-
     def end_btn(self):
         self.gold_foot_start.setEnabled(True)
         self.gold_foot_end.setEnabled(False)
         self.updata_time.stop()
 
-
     def start_init(self):
         PokeFun()
-        self.appFun.clear_poke_item()
+        self.appFun.clear_gold_item()
         self.updata_page_item_num(0)
         self.updata_page_text()
-        self.appFun.w_conf("poke", "gold_page_item", "times", "1")
-
-
+        self.until.w_conf("poke", "gold_page_item", "times", "1")
 
     def updata_page_item_num(self, start_time):
-        poke_conf = self.appFun.r_conf("poke")
+        poke_conf = self.until.r_conf("poke")
         gold_num = int(poke_conf["gold_page_item"]["gold_num"])
         bead_num = poke_conf["gold_page_item"]["bead_num"]
         paw_num = poke_conf["gold_page_item"]["paw_num"]
@@ -68,7 +65,7 @@ class GoldInterface(QWidget, Ui_Form):
         self.gold_foot_item_bottom_speed_num.setText("{}/h".format(speed))
 
     def updata_page_text(self):
-        poke_str = self.appFun.r_log("poke")
+        poke_str = self.until.r_log("poke")
         self.gold_text.setText(poke_str)
         self.gold_text.moveCursor(self.gold_text.textCursor().End)
 
@@ -81,14 +78,12 @@ class GoldInterface(QWidget, Ui_Form):
             time_str = "{}分{}秒".format(int(use_time % 3600 / 60), int(use_time % 60))
         self.gold_title_wrap_time.setText(time_str)
 
-        poke_ini_last_change_time = os.path.getmtime("{}\\poke.ini".format(self.appFun.conf_path))
-        poke_log_last_change_time = os.path.getmtime("{}\\poke.log".format(self.appFun.log_path))
+        poke_ini_last_change_time = os.path.getmtime("{}\\poke.ini".format(self.until.conf_path))
+        poke_log_last_change_time = os.path.getmtime("{}\\poke.log".format(self.until.log_path))
         if (current_time - poke_ini_last_change_time) < 1:
             print("poke ini变了, 更新page")
             self.updata_page_item_num(start_time)
         if (current_time - poke_log_last_change_time) < 1:
             print("poke log变了, 更新page")
             self.updata_page_text()
-
-
-
+            
