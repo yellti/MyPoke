@@ -7,8 +7,6 @@ from PyQt5.QtWidgets import QApplication, QWidget
 from qfluentwidgets import SplitFluentWindow, FluentIcon, NavigationAvatarWidget, NavigationItemPosition
 from goldFace import GoldInterface
 
-from lib.appFun import AppFun
-
 
 class Demo(SplitFluentWindow):
 
@@ -27,8 +25,6 @@ class Demo(SplitFluentWindow):
             text='设置',
             position=NavigationItemPosition.BOTTOM
         )
-
-        self.appFun = AppFun()
 
 
 if __name__ == '__main__':
