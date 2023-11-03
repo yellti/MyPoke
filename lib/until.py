@@ -80,3 +80,28 @@ class UntilFun(object):
         else:
             self.w_log("error", "ocr失败！ \"{}\"".format(img_path))
             return False
+
+# OCR accuracy
+    @staticmethod
+    def str_to_array(tar_str):
+        arr_box = []
+        for i in tar_str:
+            if i == "" or i == " ":
+                continue
+            arr_box.append(i)
+        return arr_box
+
+    def get_ocr_accuracy(self, tmp_str, ocr_str):
+        right_arr = self.str_to_array(tmp_str)
+        test_arr = self.str_to_array(ocr_str)
+        tot = len(test_arr)
+        dif_arr = []
+        for i in range(len(test_arr)):
+            new_str = test_arr[0]
+            test_arr.pop(0)
+            if new_str in right_arr:
+                right_arr.remove(new_str)
+            else:
+                dif_arr.append(new_str)
+        res = 1 - (len(dif_arr) / tot)
+        return res
